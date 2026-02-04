@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SWD 312</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  /* Import Google Font */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #0f172a; /* deep tech navy */
+    color: #e5e7eb;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quiz-box {
+    background: #020617; /* dark slate */
+    width: 95%;
+    max-width: 650px;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #f8fafc;
+  }
+
+  .counter {
+    text-align: center;
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+  }
+
+  /* QUESTION TEXT – MAIN CHANGE */
+  .question {
+    font-family: 'Poppins', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    color: #f1f5f9;
+    line-height: 1.5;
+  }
+
+  .options button {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0;
+    background: #111827;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    color: #e5e7eb;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+
+  .options button:hover {
+    background: #1f2937;
+    transform: scale(1.01);
+  }
+
+  .options button.correct {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+  }
+
+  .options button.wrong {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .nav-buttons button {
+    flex: 1;
+    padding: 12px;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: #f8fafc;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .nav-buttons button:disabled {
+    background: #1e293b;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+
+  .nav-buttons button:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+
+  .restart-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 13px;
+    background: #1d4ed8;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.2s ease;
+  }
+
+  .restart-btn:hover {
+    background: #2563eb;
+  }
+
+  .result {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-box">
+  <h1>DB Design Quiz</h1>
+  <div class="counter" id="counter"></div>
+
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+
+  <div class="nav-buttons">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+<button class="restart-btn" id="restartBtn" style="display:none;">Restart Quiz</button>
+</div>
+
+<script>
+const quizData = [
+{
+  q: "According to the notes, \"Data\" is defined as:",
+  o: [
+    "A structured collection of files",
+    "A raw material or fact given to a computer to process",
+    "Processed information used for decision making",
+    "An electronic filing system"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is an example of Alpha-numeric Data?",
+  o: [
+    "1, 2, 3",
+    "A, B, C",
+    "2A, 3F, 4E",
+    "@, #, $"
+  ],
+  a: 2
+},
+{
+  q: "Information is described as:",
+  o: [
+    "Every raw data that has been processed",
+    "Data stored in a filing cabinet",
+    "A set of symbols and characters",
+    "The input given to a computer"
+  ],
+  a: 0
+},
+{
+  q: "Which type of database involves the use of paper records, files, folders, and filing cabinets?",
+  o: [
+    "Electronic Database",
+    "Cloud Database",
+    "Distributed Database",
+    "Manual Database"
+  ],
+  a: 3
+},
+{
+  q: "A Centralized Database is best described as:",
+  o: [
+    "Data distributed across multiple locations",
+    "Data stored and operated in a single system",
+    "Data hosted in the cloud",
+    "Data stored on a mobile device"
+  ],
+  a: 1
+},
+{
+  q: "What does the acronym DBMS stand for?",
+  o: [
+    "Database Maintenance System",
+    "Data Basic Management Service",
+    "Database Management System",
+    "Digital Backup Management System"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following is NOT listed as an example of a DBMS in the notes?",
+  o: [
+    "MySQL",
+    "Oracle",
+    "Microsoft SQL",
+    "Microsoft Excel"
+  ],
+  a: 3
+},
+{
+  q: "Which type of database organizes data into tables with rows and columns?",
+  o: [
+    "Object-Oriented Database",
+    "Relational Database",
+    "Hierarchical Database",
+    "NoSQL"
+  ],
+  a: 1
+},
+{
+  q: "A Hierarchical Database organizes data in what kind of structure?",
+  o: [
+    "A graphical structure with many-to-one relationships",
+    "A tree-like structure with Parent and Child relationships",
+    "A flexible key-value format",
+    "Tables with rows and columns"
+  ],
+  a: 1
+},
+{
+  q: "Which database type is hosted and managed in the cloud, offering scalability and flexibility?",
+  o: [
+    "Network Database",
+    "Cloud Database",
+    "Object-Oriented Database",
+    "Manual Database"
+  ],
+  a: 1
+},
+{
+  q: "Which Data View type is described as storing the Query?",
+  o: [
+    "Database View",
+    "Application View",
+    "Materialize View",
+    "Security View"
+  ],
+  a: 2
+},
+{
+  q: "Which Data Model is considered the highest level focusing on general structure without technical details?",
+  o: [
+    "Physical Data Model",
+    "Logical Data Model",
+    "Conceptual Model",
+    "Entity Model"
+  ],
+  a: 2
+},
+{
+  q: "In a Data Model, what is an Entity?",
+  o: [
+    "The unique identifier of a table",
+    "The customer or product in a system",
+    "The visual diagram of the system",
+    "The address or phone number"
+  ],
+  a: 1
+},
+{
+  q: "What is a Primary Key?",
+  o: [
+    "A reference to a key in another table",
+    "A specific format of data view",
+    "An identifier for each record in a table",
+    "The name of the database administrator"
+  ],
+  a: 2
+},
+{
+  q: "What is the main function of an Entity Relationship Diagram (ERD)?",
+  o: [
+    "To backup data effectively",
+    "To visualize the structure of the database and relationships",
+    "To act as a user interface",
+    "To upgrade system software"
+  ],
+  a: 1
+},
+{
+  q: "Who is responsible for managing and maintaining an organized database?",
+  o: [
+    "System Analyst",
+    "Network Engineer",
+    "Database Administrator",
+    "Data Entry Clerk"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following is NOT a duty of a Database Administrator?",
+  o: [
+    "Database installation and configuration",
+    "Selling data to third parties",
+    "Performance monitoring and optimization",
+    "Backup and recovery"
+  ],
+  a: 1
+},
+{
+  q: "Symbolic Data consists of numbers like 1, 2, and 3.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "A DBMS acts as an interface between users and the database.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "NoSQL databases often store unstructured or semi-structured data.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "A Network Database represents data in a tree-like structure.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "One feature of Data View is Read Only Editable access.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "The Physical Data Model is easy to analyze.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "A Foreign Key is a reference to the primary key in another table.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "One benefit of Data View is inconsistency.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Distributed databases store data in a single location.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Troubleshooting system faults is a duty of the Database Administrator.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "According to the notes, which of the following is NOT listed as a type of Database User?",
+  o: ["Database Developers", "System Analysts", "Database End-users", "Network Administrators"],
+  a: 3
+},
+{
+  q: "TSQL stands for \"Transact Structured Query Language\".",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "In the context of Database Languages, what does \"No-SQL\" stand for according to these specific notes?",
+  o: ["Not Only SQL", "Non-Operational SQL", "Normal Structured Query Language", "New Structured Query Language"],
+  a: 2
+},
+{
+  q: "A \"Weak Entity Set\" depends on a strong entity set to stand.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "What is defined as a \"collection of entities of the same type that shares the same attributes\"?",
+  o: ["Entity Set", "Data Model", "Schema", "Attribute Group"],
+  a: 0
+},
+{
+  q: "Which type of Entity Set cannot be uniquely identified by its own attributes alone?",
+  o: ["Strong Entity Set", "Weak Entity Set", "Partial Entity Set", "Dependent Entity Set"],
+  a: 1
+},
+{
+  q: "Lack of Primary Key can lead to difficulty in uniquely identifying records.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "Which of the following is a feature of a Weak Entity Set?",
+  o: ["It uses Full Keys", "It has a Many-to-Many relationship only", "It is independent of other entities", "It uses Partial Keys"],
+  a: 3
+},
+{
+  q: "One of the pitfalls of Relational Database design is Over Normalization.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "What is the correct order of steps for Converting Entity Relationship Schema to Table?",
+  o: [
+    "Normalize -> Map relationship -> Analyze entity -> Create table",
+    "Analyze the entity -> Create separate table -> Map their relationship -> Normalize -> Verify and refine",
+    "Create table -> Analyze entity -> Verify -> Map relationship",
+    "Map relationship -> Normalize -> Analyze entity -> Create table"
+  ],
+  a: 1
+},
+{
+  q: "Excessive joint in a relational database can lead to which of the following?",
+  o: ["Data redundancy", "Making the query complex or slow", "Storage inefficiency", "Duplicate data"],
+  a: 1
+},
+{
+  q: "Normalization is the process of organizing data to increase redundancy.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Which of the following is listed as a result of Poor Normalization?",
+  o: ["Faster queries", "Data redundancy and Inconsistency", "Improved security", "Better indexing"],
+  a: 1
+},
+{
+  q: "Decomposition is defined as:",
+  o: [
+    "The process of merging small tables into one large table",
+    "The process of deleting a database",
+    "The process of breaking down a table into smaller tables",
+    "The process of backing up data"
+  ],
+  a: 2
+},
+{
+  q: "Fourth Normal Form (4NF) is described as the lower version of 1NF.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "What is a specific reason listed for Decomposing Tables?",
+  o: [
+    "To increase storage usage",
+    "To make query faster by splitting large tables",
+    "To create more duplicate data",
+    "To complexify the database design"
+  ],
+  a: 1
+},
+{
+  q: "Which Normal Form states that a column must contain a single value and not a list of values?",
+  o: ["First Normal Form (1NF)", "Second Normal Form (2NF)", "Third Normal Form (3NF)", "Fourth Normal Form (4NF)"],
+  a: 0
+},
+{
+  q: "Atomicity is a property associated with the First Normal Form (1NF).",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "A table is said to be in Second Normal Form (2NF) when:",
+  o: [
+    "Non-key columns are independent of each other",
+    "It prohibits repeating groups of columns",
+    "Non-key columns are fully dependent on the primary key",
+    "It is a higher version of 3NF"
+  ],
+  a: 2
+},
+{
+  q: "Which Normal Form requires that non-key columns are independent of each other?",
+  o: ["1NF", "2NF", "3NF", "4NF"],
+  a: 2
+},
+{
+  q: "Not defining constraints may lead to duplicate data.",
+  o: ["True", "False"],
+  a: 0
+}
+];
+
+let current = 0;
+let score = 0;
+let answers = new Array(quizData.length).fill(null);
+let shuffledOptions = new Array(quizData.length).fill(null);
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const counterEl = document.getElementById("counter");
+const resultEl = document.getElementById("result");
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function loadQuestion() {
+  const q = quizData[current];
+
+  counterEl.textContent = `Question ${current + 1} of ${quizData.length}`;
+  questionEl.textContent = q.q;
+  optionsEl.innerHTML = "";
+
+  prevBtn.disabled = current === 0;
+
+  // ✅ Shuffle options ONCE per question
+  let optionsToRender;
+
+  if (shuffledOptions[current] === null) {
+    optionsToRender = q.o.map((text, index) => ({
+      text,
+      originalIndex: index
+    }));
+
+    shuffleArray(optionsToRender);
+    shuffledOptions[current] = optionsToRender;
+  } else {
+    optionsToRender = shuffledOptions[current];
+  }
+
+  // ✅ Render options
+  optionsToRender.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt.text;
+
+    if (answers[current] !== null) {
+      btn.disabled = true;
+
+      if (opt.originalIndex === q.a) {
+        btn.classList.add("correct");
+      }
+
+      if (
+        opt.originalIndex === answers[current] &&
+        answers[current] !== q.a
+      ) {
+        btn.classList.add("wrong");
+      }
+    }
+
+    btn.onclick = () => selectAnswer(opt.originalIndex);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(index) {
+  if (answers[current] !== null) return;
+
+  answers[current] = index;
+  if (index === quizData[current].a) score++;
+
+  loadQuestion();
+}
+
+nextBtn.onclick = () => {
+  if (current < quizData.length - 1) {
+    current++;
+    loadQuestion();
+  } else {
+    showResult();
+  }
+};
+
+prevBtn.onclick = () => {
+  if (current > 0) {
+    current--;
+    loadQuestion();
+  }
+};
+
+function showResult() {
+  questionEl.style.display = "none";
+  optionsEl.style.display = "none";
+  counterEl.style.display = "none";
+  document.querySelector(".nav-buttons").style.display = "none";
+
+  const percentage = ((score / quizData.length) * 100).toFixed(2);
+  resultEl.style.display = "block";
+  restartBtn.style.display ="block";
+  resultEl.innerHTML = `
+    <p><strong>Quiz Completed</strong></p>
+    <p>Score: ${score} / ${quizData.length}</p>
+    <p>Percentage: ${percentage}%</p>
+  `;
+}
+restartBtn.onclick = () => {
+  current = 0;
+  score = 0;
+  answers = new Array(quizData.length).fill(null);
+  shuffledOptions = new Array(quizData.length).fill(null);
+
+  questionEl.style.display = "block";
+  optionsEl.style.display = "block";
+  counterEl.style.display = "block";
+  document.querySelector(".nav-buttons").style.display = "flex";
+  resultEl.style.display = "none";
+  restartBtn.style.display = "none";
+
+  optionsEl.innerHTML = "";
+
+  prevBtn.disabled = true;
+  nextBtn.disabled = false;
+
+  loadQuestion();
+};
+loadQuestion();
+</script>
+
+</body>
+</html>
