@@ -514,7 +514,157 @@ const quizData = [
   q: "Not defining constraints may lead to duplicate data.",
   o: ["True", "False"],
   a: 0
-}
+},
+  {
+  q: "What is an \"Entity Relationship Schema\" (or ER Schema)?",
+  o: [
+    "A physical database stored on a disk",
+    "The structure of the database that defines the entities and the relationships among them",
+    "A type of software used to query data",
+    "A table with rows and columns"
+  ],
+  a: 1
+},
+{
+  q: "A \"Single-valued Attribute\" can hold multiple values for one entity.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "In an ER Diagram, what shape is used to represent an \"Entity\"?",
+  o: ["Ellipse/Oval", "Diamond", "Rectangle", "Line"],
+  a: 2
+},
+{
+  q: "What shape represents an \"Attribute\" in an ER Diagram?",
+  o: ["Rectangle", "Diamond", "Ellipse/Oval", "Square"],
+  a: 2
+},
+{
+  q: "\"Age\" derived from \"Date of Birth\" is an example of a Stored Attribute.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "A \"Relationship\" in an ER Diagram is represented by which shape?",
+  o: ["Rectangle", "Diamond", "Ellipse", "Circle"],
+  a: 1
+},
+{
+  q: "Which of the following is defined as \"the property that describes an entity\"?",
+  o: ["Schema", "Relationship", "Attribute", "Key"],
+  a: 2
+},
+{
+  q: "A \"Simple Attribute\" cannot be divided into sub-parts.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "Which type of attribute is capable of being divided into smaller sub-parts?",
+  o: [
+    "Simple Attribute",
+    "Composite Attribute",
+    "Derived Attribute",
+    "Multi-valued Attribute"
+  ],
+  a: 1
+},
+{
+  q: "A Double Ellipse represents a Multi-valued Attribute.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "An attribute that can hold multiple values for a single entity is called:",
+  o: [
+    "Single-valued Attribute",
+    "Derived Attribute",
+    "Multi-valued Attribute",
+    "Composite Attribute"
+  ],
+  a: 2
+},
+{
+  q: "Which type of attribute is not physically stored but calculated from another attribute?",
+  o: [
+    "Derived Attribute",
+    "Key Attribute",
+    "Stored Attribute",
+    "Simple Attribute"
+  ],
+  a: 0
+},
+{
+  q: "In the notation for attributes, what does a \"Dashed Ellipse\" represent?",
+  o: [
+    "Multi-valued Attribute",
+    "Key Attribute",
+    "Derived Attribute",
+    "Composite Attribute"
+  ],
+  a: 2
+},
+{
+  q: "In a \"One-to-Many\" relationship, an entity in Set A is associated with many entities in Set B.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "A \"Key Attribute\" (Primary Key) is represented in an ER diagram by:",
+  o: [
+    "A double ellipse",
+    "An ellipse with the text underlined",
+    "A dashed ellipse",
+    "A diamond"
+  ],
+  a: 1
+},
+{
+  q: "What is the definition of \"Cardinality\"?",
+  o: [
+    "The number of attributes in an entity",
+    "The unique identifier of a row",
+    "The number of times an entity participates in a relationship",
+    "The size of the database file"
+  ],
+  a: 2
+},
+{
+  q: "A \"Diamond\" shape in an ER diagram represents an Attribute.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Which of the following is NOT a type of relationship listed in the notes?",
+  o: [
+    "One-to-One",
+    "One-to-Many",
+    "Many-to-One",
+    "Many-to-None"
+  ],
+  a: 3
+},
+{
+  q: "In a \"One-to-One\" relationship:",
+  o: [
+    "Multiple entities from Set A can be associated with multiple entities from Set B",
+    "An entity in Set A can be associated with at most one entity in Set B, and vice versa",
+    "An entity in Set A is associated with many in Set B",
+    "It is used for storing arrays of data"
+  ],
+  a: 1
+},
+{
+  q: "A \"Many-to-Many\" relationship means:",
+  o: [
+    "One entity in A is associated with one in B",
+    "One entity in A is associated with many in B, but B is only associated with one in A",
+    "An entity in A is associated with many in B, and an entity in B is associated with many in A",
+    "No entities are associated"
+  ],
+  a: 2
+  }
 ];
 
 let current = 0;
