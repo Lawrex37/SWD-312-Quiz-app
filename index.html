@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SWD 312</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  /* Import Google Font */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #0f172a; /* deep tech navy */
+    color: #e5e7eb;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quiz-box {
+    background: #020617; /* dark slate */
+    width: 95%;
+    max-width: 650px;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #f8fafc;
+  }
+
+  .counter {
+    text-align: center;
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+  }
+
+  /* QUESTION TEXT – MAIN CHANGE */
+  .question {
+    font-family: 'Poppins', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    color: #f1f5f9;
+    line-height: 1.5;
+  }
+
+  .options button {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0;
+    background: #111827;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    color: #e5e7eb;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+
+  .options button:hover {
+    background: #1f2937;
+    transform: scale(1.01);
+  }
+
+  .options button.correct {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+  }
+
+  .options button.wrong {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .nav-buttons button {
+    flex: 1;
+    padding: 12px;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: #f8fafc;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .nav-buttons button:disabled {
+    background: #1e293b;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+
+  .nav-buttons button:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+
+  .restart-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 13px;
+    background: #1d4ed8;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.2s ease;
+  }
+
+  .restart-btn:hover {
+    background: #2563eb;
+  }
+
+  .result {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-box">
+  <h1>DB Design Quiz</h1>
+  <div class="counter" id="counter"></div>
+
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+
+  <div class="nav-buttons">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+<button class="restart-btn" id="restartBtn" style="display:none;">Restart Quiz</button>
+</div>
+
+<script>
+const quizData = [
+{
+  q: "Which of the following best defines data in a computing context?",
+  o: [
+    "Processed facts used for decision making",
+    "Raw facts and figures supplied to a computer for processing",
+    "A structured collection of related tables",
+    "An organized form of meaningful output"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following represents alphanumeric data?",
+  o: [
+    "12345",
+    "ABCDE",
+    "A12B",
+    "All of the above"
+  ],
+  a: 3
+},
+{
+  q: "Information differs from data because information is:",
+  o: [
+    "Unprocessed input",
+    "Random symbols",
+    "Processed and meaningful",
+    "Always numerical"
+  ],
+  a: 2
+},
+{
+  q: "A database that relies on paper files, folders, and cabinets is known as a:",
+  o: [
+    "Distributed database",
+    "Electronic database",
+    "Manual database",
+    "Cloud database"
+  ],
+  a: 2
+},
+{
+  q: "Which characteristic best describes a centralized database system?",
+  o: [
+    "Data is spread across different locations",
+    "Data is stored on multiple servers",
+    "Data is stored and managed at a single location",
+    "Data is accessed without a network"
+  ],
+  a: 2
+},
+{
+  q: "DBMS stands for:",
+  o: [
+    "Data Backup Management System",
+    "Database Management System",
+    "Database Monitoring Software",
+    "Digital Business Management System"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is NOT a Database Management System?",
+  o: [
+    "MySQL",
+    "Oracle",
+    "Microsoft SQL Server",
+    "Microsoft Excel"
+  ],
+  a: 3
+},
+{
+  q: "A DBMS primarily serves as:",
+  o: [
+    "A programming language",
+    "An interface between users and the database",
+    "A physical storage device",
+    "A network protocol"
+  ],
+  a: 1
+},
+{
+  q: "Which database type organizes data into rows and columns?",
+  o: [
+    "Hierarchical database",
+    "Object-oriented database",
+    "Relational database",
+    "NoSQL database"
+  ],
+  a: 2
+},
+{
+  q: "A hierarchical database structure is best described as:",
+  o: [
+    "Table-based",
+    "Tree-like with parent-child relationships",
+    "Graph-based",
+    "Key-value based"
+  ],
+  a: 1
+},
+{
+  q: "Cloud databases are mainly known for:",
+  o: [
+    "Limited access",
+    "High hardware cost",
+    "Scalability and flexibility",
+    "Offline operation"
+  ],
+  a: 2
+},
+{
+  q: "Which type of data view stores the result of a query physically?",
+  o: [
+    "Database view",
+    "Application view",
+    "Materialized view",
+    "Security view"
+  ],
+  a: 2
+},
+{
+  q: "Which data model provides a high-level view without technical details?",
+  o: [
+    "Physical data model",
+    "Logical data model",
+    "Conceptual data model",
+    "Relational model"
+  ],
+  a: 2
+},
+{
+  q: "An entity in a data model represents:",
+  o: [
+    "A relationship",
+    "A real-world object of interest",
+    "A database constraint",
+    "An attribute value"
+  ],
+  a: 1
+},
+{
+  q: "A primary key is used to:",
+  o: [
+    "Link tables together",
+    "Identify records uniquely",
+    "Store multiple values",
+    "Control access permissions"
+  ],
+  a: 1
+},
+{
+  q: "Who is responsible for managing database performance, security, and backups?",
+  o: [
+    "System analyst",
+    "Database administrator",
+    "Network engineer",
+    "End user"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is NOT a responsibility of a database administrator?",
+  o: [
+    "Database installation",
+    "Backup and recovery",
+    "Selling organizational data",
+    "Performance tuning"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following is NOT a database user type?",
+  o: [
+    "Database developers",
+    "End users",
+    "System analysts",
+    "Network administrators"
+  ],
+  a: 3
+},
+{
+  q: "A foreign key is best described as:",
+  o: [
+    "A duplicate primary key",
+    "A reference to a primary key in another table",
+    "A unique identifier",
+    "An optional attribute"
+  ],
+  a: 1
+},
+{
+  q: "Failure to define primary keys may result in:",
+  o: [
+    "Improved performance",
+    "Data redundancy",
+    "Difficulty in record identification",
+    "All of the above"
+  ],
+  a: 2
+},
+{
+  q: "Not defining constraints in a database may lead to:",
+  o: [
+    "Duplicate data",
+    "Improved consistency",
+    "Better normalization",
+    "Higher security"
+  ],
+  a: 0
+},
+{
+  q: "One major benefit of using data views is:",
+  o: [
+    "Increased inconsistency",
+    "Improved data security",
+    "Higher redundancy",
+    "Lack of control"
+  ],
+  a: 1
+},
+{
+  q: "A distributed database differs from a centralized database because it:",
+  o: [
+    "Stores data at a single location",
+    "Requires no network",
+    "Stores data across multiple locations",
+    "Cannot be synchronized"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following best describes NoSQL according to the notes?",
+  o: [
+    "Not Only SQL",
+    "Normal Structured Query Language",
+    "New SQL",
+    "Non-relational SQL"
+  ],
+  a: 1
+},
+{
+  q: "Which database type is most suitable for unstructured data?",
+  o: [
+    "Relational database",
+    "Hierarchical database",
+    "NoSQL database",
+    "Manual database"
+  ],
+  a: 2
+},
+{
+  q: "Troubleshooting database-related faults is a duty of the DBA.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "Symbolic data includes numbers such as 1, 2, and 3.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Information is always raw and unprocessed.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "A DBMS eliminates the need for a database administrator.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Cloud databases require physical filing cabinets.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Which of the following best describes an Entity in an ER model?",
+  o: [
+    "Any attribute that uniquely identifies data",
+    "A real-world object about which data is stored",
+    "A relationship between two tables",
+    "All of the above"
+  ],
+  a: 1
+},
+{
+  q: "Which statement correctly differentiates a Strong Entity Set from a Weak Entity Set?",
+  o: [
+    "Strong entities depend on weak entities for identification",
+    "Weak entities have their own primary key",
+    "Strong entities can exist independently, weak entities cannot",
+    "Both entities must always have composite attributes"
+  ],
+  a: 2
+},
+{
+  q: "In an ER diagram, a Weak Entity is usually represented by:",
+  o: [
+    "A single rectangle",
+    "A double rectangle",
+    "A diamond with dashed lines",
+    "An ellipse with underline"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is NOT a valid type of attribute in ER modeling?",
+  o: [
+    "Composite attribute",
+    "Multi-valued attribute",
+    "Derived attribute",
+    "Foreign attribute"
+  ],
+  a: 3
+},
+{
+  q: "A Derived Attribute is best described as an attribute that:",
+  o: [
+    "Is stored physically in the database",
+    "Is calculated from another attribute",
+    "Acts as a primary key",
+    "Links two entities together"
+  ],
+  a: 1
+},
+{
+  q: "What does Cardinality in an ER diagram specify?",
+  o: [
+    "The number of attributes an entity has",
+    "The number of tuples in a table",
+    "The numerical relationship between entities",
+    "The storage size of an entity"
+  ],
+  a: 2
+},
+{
+  q: "Which relationship type requires an associative (junction) table when converted to relational tables?",
+  o: [
+    "One-to-One",
+    "One-to-Many",
+    "Many-to-Many",
+    "Many-to-One"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following situations most clearly violates First Normal Form (1NF)?",
+  o: [
+    "A table with no primary key",
+    "A table containing composite attributes",
+    "A table with multi-valued attributes in a single column",
+    "A table with foreign keys"
+  ],
+  a: 2
+},
+{
+  q: "Second Normal Form (2NF) specifically eliminates:",
+  o: [
+    "Transitive dependency",
+    "Partial dependency",
+    "Multi-valued dependency",
+    "Functional dependency"
+  ],
+  a: 1
+},
+{
+  q: "A table is in Third Normal Form (3NF) if:",
+  o: [
+    "It is already in 1NF",
+    "It has no partial dependency",
+    "It has no transitive dependency",
+    "All of the above"
+  ],
+  a: 3
+},
+{
+  q: "Which of the following best describes Transitive Dependency?",
+  o: [
+    "A non-key attribute depending on another non-key attribute",
+    "A key depending on another key",
+    "A foreign key referencing a primary key",
+    "Multiple attributes stored in one field"
+  ],
+  a: 0
+},
+{
+  q: "Over-normalization in database design may lead to:",
+  o: [
+    "Improved query performance",
+    "Reduced joins",
+    "Excessive joins and slower queries",
+    "Complete data redundancy"
+  ],
+  a: 2
+},
+{
+  q: "Decomposition is considered correct only if it is:",
+  o: [
+    "Lossy and dependency-preserving",
+    "Lossless and dependency-preserving",
+    "Lossy and non-preserving",
+    "Redundant and dependency-free"
+  ],
+  a: 1
+},
+{
+  q: "Which Normal Form specifically addresses Multi-valued Dependencies?",
+  o: [
+    "2NF",
+    "3NF",
+    "BCNF",
+    "4NF"
+  ],
+  a: 3
+},
+{
+  q: "Which of the following best justifies normalization in relational databases?",
+  o: [
+    "To increase data duplication",
+    "To reduce data redundancy and anomalies",
+    "To eliminate all foreign keys",
+    "To simplify ER diagrams"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL command is primarily used to retrieve data from a database?",
+  o: [
+    "FETCH",
+    "GET",
+    "SELECT",
+    "EXTRACT"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL clause is used to filter records after aggregation?",
+  o: [
+    "WHERE",
+    "HAVING",
+    "GROUP BY",
+    "ORDER BY"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL statement correctly creates a table with a primary key?",
+  o: [
+    "CREATE TABLE Student(id INT, name VARCHAR);",
+    "CREATE TABLE Student(id INT PRIMARY KEY, name VARCHAR);",
+    "CREATE Student TABLE(id PRIMARY, name);",
+    "MAKE TABLE Student(id KEY, name);"
+  ],
+  a: 1
+},
+{
+  q: "Which command is used to permanently remove a table structure and its data?",
+  o: [
+    "DELETE",
+    "TRUNCATE",
+    "DROP",
+    "REMOVE"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL constraint ensures that a column cannot have NULL values?",
+  o: [
+    "UNIQUE",
+    "PRIMARY KEY",
+    "CHECK",
+    "NOT NULL"
+  ],
+  a: 3
+},
+{
+  q: "In a Client-Server Architecture, which component initiates requests?",
+  o: [
+    "Database",
+    "Server",
+    "Client",
+    "Middleware"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following best describes the Server in a Client-Server system?",
+  o: [
+    "A device that only displays output",
+    "A system that provides services and resources",
+    "A passive storage unit",
+    "A user interface component"
+  ],
+  a: 1
+},
+{
+  q: "Which database operation is MOST commonly handled on the server side?",
+  o: [
+    "User input validation",
+    "Query processing and data storage",
+    "Form design",
+    "Client authentication only"
+  ],
+  a: 1
+},
+{
+  q: "One major advantage of Client-Server Architecture is:",
+  o: [
+    "Increased data redundancy",
+    "Centralized data management",
+    "Lack of scalability",
+    "Dependence on manual processing"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following scenarios BEST represents a Client-Server model?",
+  o: [
+    "A standalone calculator",
+    "A personal diary notebook",
+    "A web browser requesting data from a web server",
+    "A USB flash drive storing files"
+  ],
+  a: 2
+},
+{
+  q: "In database environments, SQL is mainly executed on the:",
+  o: [
+    "Client machine only",
+    "Server machine only",
+    "Both client and server",
+    "Network switch"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following statements about Client-Server Architecture is FALSE?",
+  o: [
+    "Clients request services from servers",
+    "Servers manage shared resources",
+    "Clients store and manage the central database",
+    "Servers respond to multiple client requests"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL command modifies existing records in a table?",
+  o: [
+    "INSERT",
+    "UPDATE",
+    "ALTER",
+    "MODIFY"
+  ],
+  a: 1
+},
+{
+  q: "Which category of SQL includes CREATE, ALTER, and DROP?",
+  o: [
+    "DML",
+    "DCL",
+    "DDL",
+    "TCL"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following best links SQL usage with Client-Server Architecture?",
+  o: [
+    "SQL is executed only on client devices",
+    "SQL enables clients to request data processing from servers",
+    "SQL replaces the need for servers",
+    "SQL eliminates networking"
+  ],
+  a: 1
+},
+
+
+//Exam styled questions
+{
+  q: "Which of the following best explains why databases replaced traditional file-based systems?",
+  o: [
+    "Databases eliminate the need for hardware",
+    "Databases reduce data redundancy and improve data consistency",
+    "File systems cannot store large data",
+    "All of the above"
+  ],
+  a: 1
+},
+{
+  q: "In database terminology, data refers to:",
+  o: [
+    "Processed facts used for decision making",
+    "Raw facts and figures before processing",
+    "Summarized reports",
+    "None of the above"
+  ],
+  a: 1
+},
+{
+  q: "Which situation best describes data inconsistency?",
+  o: [
+    "The same data stored once",
+    "Different values for the same data item in different locations",
+    "Data stored in tables",
+    "Data accessed through queries"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is NOT a function of a DBMS?",
+  o: [
+    "Data storage management",
+    "Transaction management",
+    "Manual data filing",
+    "Security enforcement"
+  ],
+  a: 2
+},
+{
+  q: "A database that stores all data at a single location is known as a:",
+  o: [
+    "Distributed database",
+    "Centralized database",
+    "Cloud database",
+    "Network database"
+  ],
+  a: 1
+},
+{
+  q: "Which database model represents data using parent-child relationships?",
+  o: [
+    "Relational model",
+    "Hierarchical model",
+    "Network model",
+    "Object-oriented model"
+  ],
+  a: 1
+},
+{
+  q: "The major disadvantage of a hierarchical database model is that it:",
+  o: [
+    "Supports redundancy",
+    "Does not support many-to-many relationships",
+    "Has poor security",
+    "Cannot store large data"
+  ],
+  a: 1
+},
+{
+  q: "Which database type allows a record to have multiple parent records?",
+  o: [
+    "Hierarchical database",
+    "Relational database",
+    "Network database",
+    "Centralized database"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following best defines a relational database?",
+  o: [
+    "Data stored in files",
+    "Data stored as objects",
+    "Data organized in tables with rows and columns",
+    "Data organized in tree structures"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following is a valid example of a NoSQL database?",
+  o: [
+    "MongoDB",
+    "Cassandra",
+    "Firebase",
+    "All of the above"
+  ],
+  a: 3
+},
+{
+  q: "A Database Administrator (DBA) is primarily responsible for:",
+  o: [
+    "Writing application programs only",
+    "Managing database performance, security, and recovery",
+    "Designing network cables",
+    "Entering data into tables"
+  ],
+  a: 1
+},
+{
+  q: "Which user interacts directly with the database through application programs?",
+  o: [
+    "Database Administrator",
+    "Database Designer",
+    "End User",
+    "System Analyst"
+  ],
+  a: 2
+},
+{
+  q: "Which data model provides a high-level view of the entire database without implementation details?",
+  o: [
+    "Physical data model",
+    "Logical data model",
+    "Conceptual data model",
+    "Relational model"
+  ],
+  a: 2
+},
+{
+  q: "An entity in a database represents:",
+  o: [
+    "A relationship between tables",
+    "A real-world object with independent existence",
+    "A derived value",
+    "A query statement"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following uniquely identifies each record in a table?",
+  o: [
+    "Foreign Key",
+    "Candidate Key",
+    "Primary Key",
+    "Composite Attribute"
+  ],
+  a: 2
+},
+{
+  q: "A foreign key is used to:",
+  o: [
+    "Uniquely identify a record",
+    "Reference the primary key of another table",
+    "Store derived data",
+    "Create duplicate records"
+  ],
+  a: 1
+},
+{
+  q: "True or False: A database view can restrict user access to sensitive data.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "Which of the following best describes an ER diagram?",
+  o: [
+    "A programming language",
+    "A graphical representation of database structure",
+    "A backup method",
+    "A query optimizer"
+  ],
+  a: 1
+},
+{
+  q: "In an ER diagram, attributes are represented using:",
+  o: [
+    "Rectangles",
+    "Diamonds",
+    "Ellipses",
+    "Lines"
+  ],
+  a: 2
+},
+{
+  q: "Which type of attribute can be divided into smaller sub-parts?",
+  o: [
+    "Simple attribute",
+    "Derived attribute",
+    "Composite attribute",
+    "Key attribute"
+  ],
+  a: 2
+},
+{
+  q: "A weak entity is best described as one that:",
+  o: [
+    "Has no attributes",
+    "Depends on a strong entity for identification",
+    "Contains only derived attributes",
+    "Has multiple primary keys"
+  ],
+  a: 1
+},
+{
+  q: "Which key is formed by combining two or more attributes?",
+  o: [
+    "Primary key",
+    "Foreign key",
+    "Composite key",
+    "Candidate key"
+  ],
+  a: 2
+},
+{
+  q: "Cardinality in a relationship specifies:",
+  o: [
+    "Number of attributes",
+    "Degree of the relationship",
+    "Number of entity instances involved",
+    "Size of the database"
+  ],
+  a: 2
+},
+{
+  q: "Which relationship allows many entities in both entity sets to be associated?",
+  o: [
+    "One-to-One",
+    "One-to-Many",
+    "Many-to-Many",
+    "Many-to-One"
+  ],
+  a: 2
+},
+{
+  q: "True or False: A derived attribute is physically stored in the database.",
+  o: ["True", "False"],
+  a: 1
+},
+{
+  q: "Normalization is primarily used to:",
+  o: [
+    "Increase redundancy",
+    "Reduce data redundancy and anomalies",
+    "Increase storage space",
+    "Slow down query processing"
+  ],
+  a: 1
+},
+{
+  q: "Which normal form requires that each field contains atomic values?",
+  o: [
+    "1NF",
+    "2NF",
+    "3NF",
+    "BCNF"
+  ],
+  a: 0
+},
+{
+  q: "A table that is in 2NF must:",
+  o: [
+    "Have no partial dependency",
+    "Have no transitive dependency",
+    "Contain only atomic values",
+    "Contain multiple primary keys"
+  ],
+  a: 0
+},
+{
+  q: "Which of the following best defines transitive dependency?",
+  o: [
+    "A non-key attribute depending on another non-key attribute",
+    "A key depending on a non-key attribute",
+    "A partial dependency",
+    "None of the above"
+  ],
+  a: 0
+},
+{
+  q: "Which normal form removes transitive dependencies?",
+  o: [
+    "1NF",
+    "2NF",
+    "3NF",
+    "4NF"
+  ],
+  a: 2
+},
+{
+  q: "Over-normalization may lead to:",
+  o: [
+    "Simpler queries",
+    "Excessive joins and reduced performance",
+    "Better data integrity",
+    "None of the above"
+  ],
+  a: 1
+},
+{
+  q: "Decomposition of tables is mainly done to:",
+  o: [
+    "Improve data integrity",
+    "Reduce anomalies",
+    "Increase efficiency",
+    "All of the above"
+  ],
+  a: 3
+},
+{
+  q: "Which SQL command is used to retrieve data from a database?",
+  o: [
+    "INSERT",
+    "UPDATE",
+    "SELECT",
+    "DELETE"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL command is classified as a Data Definition Language (DDL)?",
+  o: [
+    "SELECT",
+    "INSERT",
+    "CREATE",
+    "UPDATE"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL clause is used to filter records?",
+  o: [
+    "GROUP BY",
+    "ORDER BY",
+    "WHERE",
+    "HAVING"
+  ],
+  a: 2
+},
+{
+  q: "The SQL command used to remove a table completely is:",
+  o: [
+    "DELETE",
+    "TRUNCATE",
+    "DROP",
+    "REMOVE"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL function is used to count the number of rows?",
+  o: [
+    "SUM()",
+    "COUNT()",
+    "AVG()",
+    "TOTAL()"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL statement is used to permanently save changes made during a transaction?",
+  o: [
+    "ROLLBACK",
+    "SAVEPOINT",
+    "COMMIT",
+    "END"
+  ],
+  a: 2
+},
+{
+  q: "ACID properties in databases ensure:",
+  o: [
+    "Security and speed",
+    "Reliability of transactions",
+    "Data redundancy",
+    "Query optimization only"
+  ],
+  a: 1
+},
+{
+  q: "Which ACID property ensures that a transaction is completed fully or not at all?",
+  o: [
+    "Consistency",
+    "Isolation",
+    "Atomicity",
+    "Durability"
+  ],
+  a: 2
+},
+{
+  q: "Which ACID property ensures that committed data survives system failure?",
+  o: [
+    "Atomicity",
+    "Isolation",
+    "Durability",
+    "Consistency"
+  ],
+  a: 2
+},
+{
+  q: "Hashing in databases is mainly used to:",
+  o: [
+    "Sort records",
+    "Speed up data retrieval",
+    "Encrypt data",
+    "Normalize tables"
+  ],
+  a: 1
+},
+{
+  q: "Which database architecture allows multiple clients to access data from a central server?",
+  o: [
+    "Standalone architecture",
+    "Client-server architecture",
+    "File-based architecture",
+    "Manual system"
+  ],
+  a: 1
+},
+{
+  q: "In client-server architecture, the server is responsible for:",
+  o: [
+    "Requesting services",
+    "Data processing and storage",
+    "User interaction only",
+    "None of the above"
+  ],
+  a: 1
+},
+{
+  q: "Cloud databases are best described as databases that are:",
+  o: [
+    "Stored on local machines only",
+    "Managed and accessed via the internet",
+    "Always free to use",
+    "Used only by large companies"
+  ],
+  a: 1
+},
+{
+  q: "True or False: SQL is used only with relational databases.",
+  o: ["True", "False"],
+  a: 0
+},
+{
+  q: "Which of the following improves database security?",
+  o: [
+    "Views and access control",
+    "Normalization",
+    "Indexes",
+    "Hashing"
+  ],
+  a: 0
+},
+{
+  q: "Which factor most affects database performance?",
+  o: [
+    "Data redundancy",
+    "Proper indexing",
+    "Poor normalization",
+    "All of the above"
+  ],
+  a: 3
+},
+{
+  q: "Which of the following best describes a transaction?",
+  o: [
+    "A single SQL statement",
+    "A group of operations treated as a single unit",
+    "A database backup",
+    "A query optimization technique"
+  ],
+  a: 1
+},
+{
+  q: "Which statement best explains why a Database Management System (DBMS) is preferred over a file-based system?",
+  o: [
+    "DBMS eliminates the need for hardware resources",
+    "DBMS reduces data redundancy and enforces consistency",
+    "DBMS stores data permanently without backups",
+    "All of the above"
+  ],
+  a: 1
+},
+{
+  q: "In a client-server database architecture, which operation is MOST appropriate to be handled on the server side?",
+  o: [
+    "User input validation",
+    "Query optimization and execution",
+    "Graphical user interface rendering",
+    "Local data formatting"
+  ],
+  a: 1
+},
+{
+  q: "Which scenario BEST justifies the use of a distributed database?",
+  o: [
+    "A single-user desktop application",
+    "A system requiring high availability across locations",
+    "A manual filing system with backups",
+    "None of the above"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following problems is MOST likely to occur in a poorly designed centralized database?",
+  o: [
+    "Increased network latency",
+    "Single point of failure",
+    "Excessive data fragmentation",
+    "Automatic load balancing"
+  ],
+  a: 1
+},
+{
+  q: "Which database object is primarily used to enforce entity integrity?",
+  o: [
+    "Foreign Key",
+    "Index",
+    "Primary Key",
+    "View"
+  ],
+  a: 2
+},
+{
+  q: "A weak entity set differs from a strong entity set because it:",
+  o: [
+    "Has no attributes",
+    "Depends on another entity for identification",
+    "Cannot participate in relationships",
+    "Uses only composite keys"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following best describes partial dependency in normalization?",
+  o: [
+    "A non-key attribute depends on part of a composite key",
+    "A key depends on a non-key attribute",
+    "Two non-key attributes depend on each other",
+    "All attributes depend fully on the primary key"
+  ],
+  a: 0
+},
+{
+  q: "Second Normal Form (2NF) primarily aims to eliminate:",
+  o: [
+    "Transitive dependency",
+    "Partial dependency",
+    "Multivalued dependency",
+    "Insertion anomalies"
+  ],
+  a: 1
+},
+{
+  q: "Which situation violates Third Normal Form (3NF)?",
+  o: [
+    "A non-key attribute depends on another non-key attribute",
+    "A table has a composite primary key",
+    "A table contains atomic values",
+    "All of the above"
+  ],
+  a: 0
+},
+{
+  q: "Over-normalization in a database design can result in:",
+  o: [
+    "Simpler queries",
+    "Excessive joins and performance issues",
+    "Increased data redundancy",
+    "Loss of data integrity"
+  ],
+  a: 1
+},
+{
+  q: "Which ERD component directly represents associations between entities?",
+  o: [
+    "Attributes",
+    "Relationships",
+    "Primary keys",
+    "Schemas"
+  ],
+  a: 1
+},
+{
+  q: "A many-to-many relationship between two entities is typically resolved by:",
+  o: [
+    "Adding a multivalued attribute",
+    "Introducing a junction table",
+    "Removing one entity",
+    "Using a derived attribute"
+  ],
+  a: 1
+},
+{
+  q: "Which attribute type is computed rather than stored?",
+  o: [
+    "Composite attribute",
+    "Derived attribute",
+    "Multivalued attribute",
+    "Key attribute"
+  ],
+  a: 1
+},
+{
+  q: "Cardinality in an ER diagram specifies:",
+  o: [
+    "The number of attributes in an entity",
+    "The number of entities in a database",
+    "How many instances of one entity relate to another",
+    "The size of a relation"
+  ],
+  a: 2
+},
+{
+  q: "Which normalization form ensures that a table contains only atomic values?",
+  o: [
+    "1NF",
+    "2NF",
+    "3NF",
+    "BCNF"
+  ],
+  a: 0
+},
+{
+  q: "Which SQL command category is responsible for defining database structure?",
+  o: [
+    "DML",
+    "DDL",
+    "DCL",
+    "TCL"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL statement is used to permanently remove a table and its data?",
+  o: [
+    "DELETE",
+    "TRUNCATE",
+    "DROP",
+    "REMOVE"
+  ],
+  a: 2
+},
+{
+  q: "The SQL HAVING clause is mainly used to:",
+  o: [
+    "Filter rows before grouping",
+    "Filter groups after aggregation",
+    "Replace the WHERE clause",
+    "Sort query results"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL JOIN returns only matching rows from both tables?",
+  o: [
+    "LEFT JOIN",
+    "RIGHT JOIN",
+    "FULL JOIN",
+    "INNER JOIN"
+  ],
+  a: 3
+},
+{
+  q: "Which SQL command is classified under Transaction Control Language (TCL)?",
+  o: [
+    "SAVEPOINT",
+    "GRANT",
+    "INSERT",
+    "CREATE"
+  ],
+  a: 0
+},
+{
+  q: "The ACID property that ensures a transaction is completed entirely or not at all is:",
+  o: [
+    "Consistency",
+    "Isolation",
+    "Durability",
+    "Atomicity"
+  ],
+  a: 3
+},
+{
+  q: "Which ACID property prevents concurrent transactions from interfering with each other?",
+  o: [
+    "Atomicity",
+    "Consistency",
+    "Isolation",
+    "Durability"
+  ],
+  a: 2
+},
+{
+  q: "Indexing in databases is mainly used to:",
+  o: [
+    "Reduce storage space",
+    "Improve data security",
+    "Speed up data retrieval",
+    "Eliminate redundancy"
+  ],
+  a: 2
+},
+{
+  q: "Which technique maps keys directly to storage locations for fast access?",
+  o: [
+    "Indexing",
+    "Hashing",
+    "Clustering",
+    "Normalization"
+  ],
+  a: 1
+},
+{
+  q: "A major drawback of hashing in databases is:",
+  o: [
+    "Poor insertion speed",
+    "Difficulty in range queries",
+    "High redundancy",
+    "Complex schema design"
+  ],
+  a: 1
+},
+{
+  q: "Which type of SQL constraint ensures that a column cannot contain NULL values?",
+  o: [
+    "UNIQUE",
+    "CHECK",
+    "NOT NULL",
+    "DEFAULT"
+  ],
+  a: 2
+},
+{
+  q: "Which constraint enforces referential integrity between tables?",
+  o: [
+    "PRIMARY KEY",
+    "UNIQUE",
+    "FOREIGN KEY",
+    "CHECK"
+  ],
+  a: 2
+},
+{
+  q: "Which database user is MOST responsible for defining conceptual data models?",
+  o: [
+    "End User",
+    "Database Administrator",
+    "System Analyst",
+    "Application Programmer"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following best describes a view in SQL?",
+  o: [
+    "A physical copy of a table",
+    "A stored query presented as a table",
+    "A backup mechanism",
+    "A temporary transaction log"
+  ],
+  a: 1
+},
+{
+  q: "Which isolation problem occurs when a transaction reads uncommitted data from another transaction?",
+  o: [
+    "Lost update",
+    "Dirty read",
+    "Phantom read",
+    "Non-repeatable read"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL clause is used to sort query results?",
+  o: [
+    "GROUP BY",
+    "ORDER BY",
+    "HAVING",
+    "SORT"
+  ],
+  a: 1
+},
+{
+  q: "Which database design issue leads to insertion, update, and deletion anomalies?",
+  o: [
+    "Indexing",
+    "Denormalization",
+    "Poor normalization",
+    "Hashing"
+  ],
+  a: 2
+},
+{
+  q: "Which of the following is NOT a responsibility of a Database Administrator?",
+  o: [
+    "Performance tuning",
+    "Backup and recovery",
+    "End-user data entry",
+    "Security management"
+  ],
+  a: 2
+},
+{
+  q: "Which type of database is MOST suitable for handling unstructured data?",
+  o: [
+    "Relational database",
+    "Hierarchical database",
+    "NoSQL database",
+    "Network database"
+  ],
+  a: 2
+},
+{
+  q: "Which SQL command removes all rows from a table but keeps its structure?",
+  o: [
+    "DELETE",
+    "DROP",
+    "TRUNCATE",
+    "REMOVE"
+  ],
+  a: 2
+},
+{
+  q: "Which normal form eliminates multivalued dependencies?",
+  o: [
+    "2NF",
+    "3NF",
+    "4NF",
+    "BCNF"
+  ],
+  a: 2
+},
+{
+  q: "Which statement about cloud databases is MOST accurate?",
+  o: [
+    "They eliminate the need for DBMS",
+    "They are always free to use",
+    "They offer scalability and remote access",
+    "They cannot support SQL"
+  ],
+  a: 2
+},
+{
+  q: "Which type of SQL command controls user access and permissions?",
+  o: [
+    "DDL",
+    "DML",
+    "DCL",
+    "TCL"
+  ],
+  a: 2
+},
+{
+  q: "Which component ensures long-term data persistence after a transaction commits?",
+  o: [
+    "Atomicity",
+    "Consistency",
+    "Isolation",
+    "Durability"
+  ],
+  a: 3
+},
+{
+  q: "Which JOIN will return all records when there is a match in either table?",
+  o: [
+    "INNER JOIN",
+    "LEFT JOIN",
+    "RIGHT JOIN",
+    "FULL OUTER JOIN"
+  ],
+  a: 3
+},
+{
+  q: "Which of the following best explains denormalization?",
+  o: [
+    "Breaking tables into smaller units",
+    "Removing redundancy completely",
+    "Intentionally introducing redundancy for performance",
+    "Deleting unused attributes"
+  ],
+  a: 2
+}
+
+];
+
+let current = 0;
+let score = 0;
+
+// ✅ Pick 60 random questions WITHOUT modifying quizData
+function pickRandomQuestions(bank, count) {
+  const copy = [...bank];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, count);
+}
+
+const examData = pickRandomQuestions(quizData, 60);
+
+let answers = new Array(examData.length).fill(null);
+let shuffledOptions = new Array(examData.length).fill(null);
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const counterEl = document.getElementById("counter");
+const resultEl = document.getElementById("result");
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function loadQuestion() {
+  const q = examData[current];
+
+  counterEl.textContent = `Question ${current + 1} of ${examData.length}`;
+  questionEl.textContent = q.q;
+  optionsEl.innerHTML = "";
+
+  prevBtn.disabled = current === 0;
+
+  let optionsToRender;
+
+  if (shuffledOptions[current] === null) {
+    optionsToRender = q.o.map((text, index) => ({
+      text,
+      originalIndex: index
+    }));
+
+    shuffleArray(optionsToRender);
+    shuffledOptions[current] = optionsToRender;
+  } else {
+    optionsToRender = shuffledOptions[current];
+  }
+
+  optionsToRender.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt.text;
+
+    if (answers[current] !== null) {
+      btn.disabled = true;
+
+      if (opt.originalIndex === q.a) {
+        btn.classList.add("correct");
+      }
+
+      if (
+        opt.originalIndex === answers[current] &&
+        answers[current] !== q.a
+      ) {
+        btn.classList.add("wrong");
+      }
+    }
+
+    btn.onclick = () => selectAnswer(opt.originalIndex);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(index) {
+  if (answers[current] !== null) return;
+
+  answers[current] = index;
+  if (index === examData[current].a) score++;
+
+  loadQuestion();
+}
+
+nextBtn.onclick = () => {
+  if (current < examData.length - 1) {
+    current++;
+    loadQuestion();
+  } else {
+    showResult();
+  }
+};
+
+prevBtn.onclick = () => {
+  if (current > 0) {
+    current--;
+    loadQuestion();
+  }
+};
+
+function showResult() {
+  questionEl.style.display = "none";
+  optionsEl.style.display = "none";
+  counterEl.style.display = "none";
+  document.querySelector(".nav-buttons").style.display = "none";
+
+  const percentage = ((score / examData.length) * 100).toFixed(2);
+  resultEl.style.display = "block";
+  restartBtn.style.display ="block";
+
+  resultEl.innerHTML = `
+    <p><strong>Quiz Completed</strong></p>
+    <p>Score: ${score} / ${examData.length}</p>
+    <p>Percentage: ${percentage}%</p>
+  `;
+}
+
+restartBtn.onclick = () => {
+  current = 0;
+  score = 0;
+
+  const newExamData = pickRandomQuestions(quizData, 60);
+  examData.length = 0;
+  examData.push(...newExamData);
+
+  answers = new Array(examData.length).fill(null);
+  shuffledOptions = new Array(examData.length).fill(null);
+
+  questionEl.style.display = "block";
+  optionsEl.style.display = "block";
+  counterEl.style.display = "block";
+  document.querySelector(".nav-buttons").style.display = "flex";
+  resultEl.style.display = "none";
+  restartBtn.style.display = "none";
+
+  prevBtn.disabled = true;
+  nextBtn.disabled = false;
+
+  loadQuestion();
+};
+
+loadQuestion();
+</script>
+
+</body>
+</html>
