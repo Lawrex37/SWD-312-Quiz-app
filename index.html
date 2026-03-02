@@ -1692,6 +1692,296 @@ const quizData = [
     "A table has no primary key"
   ],
   a: 1
+},
+{
+  q: "A table STUDENT_COURSE(StudentID, StudentName, CourseID, CourseName, Lecturer, LecturerOffice) has the functional dependencies: StudentID → StudentName and CourseID → CourseName, Lecturer, LecturerOffice. What is the highest normal form of this table?",
+  o: [
+    "First Normal Form only",
+    "Second Normal Form",
+    "Third Normal Form",
+    "Boyce-Codd Normal Form"
+  ],
+  a: 0
+},
+{
+  q: "A relation is in Second Normal Form if it:",
+  o: [
+    "Has no repeating groups",
+    "Has no partial dependency on a composite key",
+    "Has no transitive dependency",
+    "Contains only atomic values"
+  ],
+  a: 1
+},
+{
+  q: "Which situation represents a transitive dependency?",
+  o: [
+    "A → B and B → C",
+    "A → B only",
+    "A → C directly",
+    "A is a primary key"
+  ],
+  a: 0
+},
+{
+  q: "If deletion of a record causes unintended loss of additional data, this is known as:",
+  o: [
+    "Insertion anomaly",
+    "Update anomaly",
+    "Deletion anomaly",
+    "Functional dependency"
+  ],
+  a: 2
+},
+{
+  q: "A table with a composite primary key (A, B) where attribute C depends only on A violates:",
+  o: [
+    "1NF",
+    "2NF",
+    "3NF",
+    "BCNF"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following statements about normalization is correct?",
+  o: [
+    "Normalization increases redundancy to improve speed",
+    "Normalization eliminates all foreign keys",
+    "Normalization reduces redundancy and dependency issues",
+    "Normalization prevents indexing"
+  ],
+  a: 2
+},
+{
+  q: "Consider a relation R(A, B, C) with functional dependencies A → B and B → C. If A is the primary key, which normal form does R satisfy?",
+  o: [
+    "1NF only",
+    "2NF only",
+    "3NF",
+    "BCNF"
+  ],
+  a: 1
+},
+{
+  q: "Which anomaly is most likely to occur in a poorly normalized table containing redundant lecturer data across multiple student rows?",
+  o: [
+    "Insertion anomaly only",
+    "Update anomaly only",
+    "Deletion anomaly only",
+    "All of the above"
+  ],
+  a: 3
+  },
+{
+  q: "Which relational algebra operation is required to retrieve specific columns from a relation?",
+  o: [
+    "Selection (σ)",
+    "Projection (π)",
+    "Join (⨝)",
+    "Union (∪)"
+  ],
+  a: 1
+},
+{
+  q: "Which relational algebra expression retrieves rows where Salary > 50000 from EMPLOYEE?",
+  o: [
+    "π Salary>50000 (EMPLOYEE)",
+    "σ Salary>50000 (EMPLOYEE)",
+    "EMPLOYEE ⨝ Salary>50000",
+    "None of the above"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following SQL commands is classified under TCL?",
+  o: [
+    "COMMIT",
+    "GRANT",
+    "CREATE",
+    "SELECT"
+  ],
+  a: 0
+},
+{
+  q: "If a transaction updates two tables but the system crashes before completion, which ACID property ensures the database remains consistent?",
+  o: [
+    "Atomicity",
+    "Isolation",
+    "Durability",
+    "Indexing"
+  ],
+  a: 0
+},
+{
+  q: "Which ACID property ensures that once a transaction is committed, it will survive system failure?",
+  o: [
+    "Consistency",
+    "Durability",
+    "Isolation",
+    "Atomicity"
+  ],
+  a: 1
+},
+{
+  q: "A non-clustered index differs from a clustered index because:",
+  o: [
+    "It determines the physical order of data storage",
+    "It stores a separate structure pointing to data rows",
+    "It allows only one per table",
+    "It eliminates the need for primary keys"
+  ],
+  a: 1
+},
+{
+  q: "Which type of JOIN returns only matching rows from both tables?",
+  o: [
+    "LEFT JOIN",
+    "RIGHT JOIN",
+    "INNER JOIN",
+    "FULL OUTER JOIN"
+  ],
+  a: 2
+},
+{
+  q: "Given two tables STUDENT and RESULT, which JOIN ensures all students appear even if they have no result?",
+  o: [
+    "INNER JOIN",
+    "LEFT JOIN (STUDENT as left table)",
+    "RIGHT JOIN",
+    "CROSS JOIN"
+  ],
+  a: 1
+},
+{
+  q: "Which SQL command category is responsible for defining database structure?",
+  o: [
+    "DML",
+    "DDL",
+    "DCL",
+    "TCL"
+  ],
+  a: 1
+},
+{
+  q: "A view in SQL primarily provides:",
+  o: [
+    "Physical data storage",
+    "A virtual table based on a query",
+    "Automatic indexing",
+    "Faster disk access"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is a key advantage of NoSQL databases over relational databases?",
+  o: [
+    "Strict schema enforcement",
+    "Better horizontal scalability",
+    "Use of SQL language",
+    "Foreign key constraints"
+  ],
+  a: 1
+},
+{
+  q: "Concurrency control in DBMS is primarily used to:",
+  o: [
+    "Speed up internet connection",
+    "Prevent data inconsistency during simultaneous transactions",
+    "Delete duplicate tables",
+    "Increase storage size"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following is a common concurrency control technique?",
+  o: [
+    "Two-phase locking",
+    "Data clustering",
+    "Normalization",
+    "Index merging"
+  ],
+  a: 0
+},
+{
+  q: "A deadlock occurs when:",
+  o: [
+    "A transaction runs too fast",
+    "Two or more transactions wait indefinitely for each other’s resources",
+    "A primary key is duplicated",
+    "An index fails"
+  ],
+  a: 1
+},
+{
+  q: "Which condition is necessary for a deadlock to occur?",
+  o: [
+    "Mutual exclusion",
+    "No internet connection",
+    "Data redundancy",
+    "High CPU usage"
+  ],
+  a: 0
+},
+{
+  q: "A distributed database system is characterized by:",
+  o: [
+    "Data stored in one single location only",
+    "Data distributed across multiple physical locations",
+    "No need for DBMS software",
+    "Absence of network communication"
+  ],
+  a: 1
+},
+{
+  q: "The conceptual schema in a DBMS describes:",
+  o: [
+    "How data is physically stored",
+    "User-specific views of data",
+    "The overall logical structure of the database",
+    "Backup configuration"
+  ],
+  a: 2
+},
+{
+  q: "OLTP systems are mainly designed for:",
+  o: [
+    "Complex analytical queries",
+    "Real-time transaction processing",
+    "Historical trend analysis",
+    "Data mining only"
+  ],
+  a: 1
+},
+{
+  q: "Which of the following best describes a data warehouse?",
+  o: [
+    "A temporary memory space",
+    "A centralized repository for integrated historical data",
+    "A backup disk drive",
+    "A real-time transaction engine"
+  ],
+  a: 1
+},
+{
+  q: "Referential integrity ensures that:",
+  o: [
+    "Every table has an index",
+    "Foreign key values correspond to existing primary key values",
+    "Data is encrypted",
+    "Transactions are durable"
+  ],
+  a: 1
+},
+{
+  q: "RAID technology is mainly used in databases to:",
+  o: [
+    "Increase query complexity",
+    "Improve data storage performance and fault tolerance",
+    "Reduce normalization",
+    "Prevent SQL injection"
+  ],
+  a: 1
 }
 
 ];
